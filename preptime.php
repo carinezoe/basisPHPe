@@ -6,17 +6,28 @@
 // if preptime is past ordertime, it should be removed from the array,
 // each futher dish in orders adds $kitchenload +1 so the time gets delayed a little the later your order is placed
 
-function calculatePrepTime () {
+function calculatePrepTime() {
     // Array of dishes with prep times
-    $dishPreptime = [['pasta carbonara', 15], ['pasta pesto', 12], ['lasagne', 20], ['pizza hawaï', 10], ['pizza 4 kazen', 10]];
-    // Array of orders
+    $dishPreptime = [
+        ['pasta carbonara', 15],
+        ['pasta pesto', 12],
+        ['lasagne', 20],
+        ['pizza hawaï', 10],
+        ['pizza 4 kazen', 10]
+    ];
+
+    // Get orders from session
     if (isset($_SESSION['orders'])) {
         $orders = $_SESSION['orders'];
-    } else $orders = [];
-    // Currenttime
-    $currentTime = time(); 
-    // Array to store prep times for each order
-    $prepTimes = []; 
+    } else {
+        $orders = [];
+    }
+
+    // Current time
+    $currentTime = time();
+    
+    // Array to store updated orders
+    $updatedOrders = [];
 
     // Loops through all orders
     foreach ($orders as $key => $order) {
@@ -30,7 +41,7 @@ function calculatePrepTime () {
             // Compare each dish with the $dishPreptime array
             foreach ($dishPreptime as $dish) {
                 // Compare dish name
-                if ($item['name'] == $dish[0]) {  
+                if ($item['name'] == $dish[0]) {
                     // Set the max prep time if it's greater than the previous ones
                     $maxPrepTime = max($maxPrepTime, $dish[1]);
                     // Add the item amount to the total amount of dishes in the order
@@ -45,21 +56,22 @@ function calculatePrepTime () {
         }
 
         // Kitchenload
-        $maxPrepTime = $maxPrepTime + ($key * 2);
+        $maxPrepTime = $maxPrepTime + (count($updatedOrders) * 2);
 
         $orderTime = strtotime($order['time']);
         $orderReady = $orderTime + ($maxPrepTime * 60);
-        
+
         if ($orderReady > $currentTime) {
-            // Store the greatest prep time for the current order
-            $prepTimes[] = $maxPrepTime; 
-        } else {
-            // Remove prepped orders
-            array_splice($orders, $key, 1);
+            // Create a copy of the order and update its prepTime
+            $updatedOrder = $order;
+            $updatedOrder['prepTime'] = $maxPrepTime;
+            $updatedOrders[] = $updatedOrder;
         }
+        // Orders that are ready will be automatically filtered out
     }
 
-    $_SESSION['orders'] = array_values($orders); // Re-index the array
-
-    return $prepTimes;
+    // Update the session with the modified orders
+    $_SESSION['orders'] = $updatedOrders;
+    
+    return $_SESSION['orders'];
 }

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($amount > 0) { // Only add items with a quantity > 0
             $order[] = [
                 'name' => $dishName,
-                'amount' => (int) $amount
+                'amount' => (int) $amount,
             ];
         }
     }
@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($order)) {
         $_SESSION['orders'][] = [
             'time' => $orderTime,
+            'prepTime' => 0,
             'items' => $order
         ];
     }

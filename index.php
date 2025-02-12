@@ -2,16 +2,11 @@
 
 session_start();
 
-// Array of orders
-if (isset($_SESSION['orders'])) {
-    $orders = $_SESSION['orders'];
-} else $orders = [];
-
 // Array of prep times
 include 'preptime.php';
-$preptime = calculatePrepTime();
+$orders = calculatePrepTime();
 
-print_r ($preptime);
+print_r ($orders);
 
 ?>
 
@@ -36,9 +31,19 @@ print_r ($preptime);
             }
             echo "<br>";
             echo "Bestelling geplaatst op: ".$order['time']."<br>";
-            // Shows the prep time for each order
-            echo "Bereidingstijd: ".$preptime[$index]
-                    ." minuten<br><br><br>";
+            // Display the prep time for each order
+            echo "Bereidingstijd: ".$order['prepTime']." minuten<br>";
+
+            // Calculate time when ready
+            $orderTime = strtotime($order['time']);
+            $orderReady = $orderTime + ($order['prepTime'] * 60);
+
+            // Calculate minutes remaining
+            $currentTime = time();
+            $minutesRemaining = ceil(($orderReady - $currentTime) / 60);
+
+            // Display time 'till ready
+            echo "Klaar in: ".$minutesRemaining." minuten<br><br><br>";
         }
     } else {
         echo "No orders found.";
