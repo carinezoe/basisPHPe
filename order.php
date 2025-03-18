@@ -33,12 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-<h1>Bestel</h1>
+<h1 class="text-4xl font-bold underline p-4">Bestel</h1>
 
 <!--Button to redirect to the order overview-->
 <form action="index.php">
-        <button>Terug naar overzicht</button>
+        <button class="border-2 border-lime-500 rounded-xl m-2 ml-4 p-1 w-1/2">Terug naar overzicht</button>
 </form>
 
 <!--Order form-->
@@ -46,13 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php 
         // Displays the available dishes + input field for the amount
         foreach ($dishes as $dish) {
-            echo "$dish
-                    <br>
-                    <input type='number' name='amount[$dish]' placeholder='hoeveel'>
-                    <br>
-                    <br>";
+            echo "<div class='flex w-1/2 m-2 ml-4'>
+                    <div class='flex flex-wrap justify-start w-1/2'>$dish</div>
+                    <div class='flex flex-wrap justify-end W-1/2'>
+                        <input type='number' name='amount[$dish]' placeholder='hoeveel'>
+                    </div>
+                    </div>";
         }
     ?>
-    <input type="submit">
-    <input type="reset">
+    <div class="flex justify-center w-1/2 mt-5">
+        <input class="border-2 border-lime-500 rounded-xl ml-4 p-1 w-1/2" type="submit" value="Bestellen">
+        <input class="border-2 border-lime-500 rounded-xl ml-4 p-1 w-1/2" type="reset" value="Reset">
+    </div>
 </form>
